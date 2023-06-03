@@ -24,7 +24,7 @@ parentPort.on('message', async (message) => {
         const { cluster_id, temperature, humidity } = data;
 
         if (request === 'insert') {
-            handleInsertRequest(type, cluster_id, temperature, humidity);
+            handleInsertRequest(connection, type, cluster_id, temperature, humidity);
         }
 
         releaseConnection(connection);
@@ -43,12 +43,13 @@ function releaseConnection(connection) {
 
 /**
  * Handles the 'insert' request by performing the appropriate database operations.
+ * @param {*} connection - The database connection.
  * @param {number} type - The type of request.
  * @param {string} cluster_id - The cluster ID.
  * @param {number} temperature - The temperature value.
  * @param {number} humidity - The humidity value.
  */
-async function handleInsertRequest(type, cluster_id, temperature, humidity) {
+async function handleInsertRequest(connection, type, cluster_id, temperature, humidity) {
     if (type === 0) {
         const selectQuery = 'SELECT cluster_id FROM cluster_records WHERE cluster_id = ?';
         const [rows] = await connection.query(selectQuery, [cluster_id]);
